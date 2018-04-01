@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PdbLibrary", "PdbLibrary\PdbLibrary.csproj", "{482A65ED-8185-4FD1-BAD0-0F51D843966C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestPdbLibrary", "UnitTestPdbLibrary\UnitTestPdbLibrary.csproj", "{128E8B3D-CC8F-463E-88F0-69518182DB3E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{482A65ED-8185-4FD1-BAD0-0F51D843966C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{482A65ED-8185-4FD1-BAD0-0F51D843966C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{482A65ED-8185-4FD1-BAD0-0F51D843966C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{482A65ED-8185-4FD1-BAD0-0F51D843966C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{128E8B3D-CC8F-463E-88F0-69518182DB3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{128E8B3D-CC8F-463E-88F0-69518182DB3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{128E8B3D-CC8F-463E-88F0-69518182DB3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{128E8B3D-CC8F-463E-88F0-69518182DB3E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
