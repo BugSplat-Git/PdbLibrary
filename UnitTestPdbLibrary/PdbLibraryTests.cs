@@ -25,12 +25,20 @@ namespace UnitTestPdbLibrary
         }
 
         [TestMethod]
+        public void TestPEFileGuid2()
+        {
+            PEFile peFile = new PEFile(@"..\..\testdata\libgcc_s_sjlj-1.dll");
+            string guid = peFile.guid();
+            Assert.AreEqual(guid, "000200001E000");        
+        }
+
+        [TestMethod]
         public void TestSymbolStore()
         {
             // Checks all GUIDs in a given symbol store.
             string dir = @"z:\SymbolServers";
-            //string dir = @"z:\SymbolServers\UnitTests\KF2_Client-1041";
-            //string dir = @"z:\SymbolServers\UnitTests\KF2_Client-1041\_KFGame.pdb";
+            //string dir = @"y:\SymbolServers";
+            //string dir = @"y:\ossymbols";
             CheckGuidsInStore(dir, dir + @"\pbdtests.log");
             Assert.IsTrue(true);
         }
