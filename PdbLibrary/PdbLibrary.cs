@@ -443,7 +443,7 @@ namespace PdbLibrary
 
         public string guid()
         {
-            string rval = String.Format("{0:X}{1:X}", this.timeDateStamp, this.sizeOfImage);
+            string rval = String.Format("{0:X8}{1:X}", this.timeDateStamp, this.sizeOfImage);
             return rval;
         }
     }
