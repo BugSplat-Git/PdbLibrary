@@ -164,7 +164,7 @@ namespace PdbLibrary
                 if (n != blockSize)
                 {
                     throw new Exception(
-                        String.Format("Error reading root pages {0} != {1} at index {3}",
+                        String.Format("Error reading root pages {0} != {1} at index {2}",
                             n, blockSize, i));
                 }
             }
