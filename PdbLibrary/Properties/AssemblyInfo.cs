@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("PdbLibrary")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Extract GUIDs from Windows Executables and Symbol Files")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Amazon.com")]
+[assembly: AssemblyCompany("BugSplat")]
 [assembly: AssemblyProduct("PdbLibrary")]
-[assembly: AssemblyCopyright("Copyright © Amazon.com 2018")]
+[assembly: AssemblyCopyright("Copyright BugSplat, All Rights Reserved")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
