@@ -298,16 +298,21 @@ namespace PdbLibrary
         // The GUID and Age values are accessable as following object members:
         //    guid - PDB file's GUID as an instance of GUID class
         //    age  - PDB file's Age, as an integer
-        public GUID guid = null;
+        public GUID GUID = null;
 
-        public PDBFile(String filepath)
+        public PDBFile(FileInfo pdbFileInfo)
         {
+            if (!pdbFileInfo.Exists)
+            {
+                throw new ArgumentException($"PFile does not exist at path: {pdbFileInfo.FullName}");
+            }
+
             if (BitConverter.IsLittleEndian != true)
             {
                 throw new Exception("Invalid architecture.  This code requires little-endian");
             }
 
-            using (FileStream fp = new FileStream(filepath, FileMode.Open, FileAccess.Read))
+            using (FileStream fp = new FileStream(pdbFileInfo.FullName, FileMode.Open, FileAccess.Read))
             {
                 // Check signature
                 byte[] bytes = new byte[PdbSignature.signature.Length];
@@ -357,18 +362,19 @@ namespace PdbLibrary
                 {
                     fileReadOffset = dbi_stream_pages[0] * root.getBlockSize() + 2 * 4;
                     uint age = ReadHelper.ReadUInt32(fp, fileReadOffset);
-                    this.guid = new GUID(guid_d1, guid_d2, guid_d3, guid_d4, age);
+                    this.GUID = new GUID(guid_d1, guid_d2, guid_d3, guid_d4, age);
                 }
                 else
                 {
                     // vc140.pdb however, does not have this stream,
                     // so it does not have an age that can be used
                     // in the hash string
-                    this.guid = new GUID(guid_d1, guid_d2, guid_d3, guid_d4);
+                    this.GUID = new GUID(guid_d1, guid_d2, guid_d3, guid_d4);
                 }
             }
         }
     }
+
     public class PEFile
     {
         readonly byte[] PE_SIGNATURE = new byte[] { (byte)'P', (byte)'E', 0, 0 };
@@ -398,14 +404,19 @@ namespace PdbLibrary
         int timeDateStamp;
         int sizeOfImage;
 
-        public PEFile(string filepath)
+        public PEFile(FileInfo peFileInfo)
         {
+            if (!peFileInfo.Exists)
+            {
+                throw new ArgumentException($"File does not exist at path: {peFileInfo.FullName}");
+            }
+
             if (BitConverter.IsLittleEndian != true)
             {
                 throw new Exception("Invalid architecture.  This code requires little-endian");
             }
 
-            using (FileStream fp = new FileStream(filepath, FileMode.Open, FileAccess.Read))
+            using (FileStream fp = new FileStream(peFileInfo.FullName, FileMode.Open, FileAccess.Read))
             {
                 // load PE signature offset
                 int pe_sig_offset = ReadHelper.ReadInt32(fp, PE_SIGNATURE_POINTER);
@@ -436,7 +447,7 @@ namespace PdbLibrary
             }
         }
 
-        public string guid()
+        public string Guid()
         {
             string rval = String.Format("{0:X8}{1:X}", this.timeDateStamp, this.sizeOfImage);
             return rval;
