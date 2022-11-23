@@ -44,7 +44,7 @@ namespace UnitTestPdbLibrary
             Assert.AreEqual(guid, "000200001E000");        
         }
 
-        [Test]
+        [Test, Explicit]
         public void TestSymbolStore()
         {
             // Checks all GUIDs in a given symbol store.
