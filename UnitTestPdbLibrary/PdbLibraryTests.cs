@@ -22,7 +22,7 @@ namespace UnitTestPdbLibrary
         [Test]
         public void TestPeFileInvalidPath()
         {
-            Assert.Throws<ArgumentException>(() => new PDBFile(new FileInfo(TestData("does-not-exist.dll"))));
+            Assert.Throws<ArgumentException>(() => new PEFile(new FileInfo(TestData("does-not-exist.dll"))));
         }
 
         [Test]
@@ -54,8 +54,8 @@ namespace UnitTestPdbLibrary
         {
             // Checks all GUIDs in a given symbol store.
             string dir = @"z:\SymbolServers";
-            CheckGuidsInStore(dir, dir + @"\pbdtests.log");
-            Assert.That(true, Is.True);
+            CheckGuidsInStore(dir, Path.Combine(dir, "pbdtests.log"));
+            Assert.Pass();
         }
 
         void CheckGuidsInStore(string dir, string fp)
@@ -69,9 +69,7 @@ namespace UnitTestPdbLibrary
                         File.AppendAllText(fp, String.Format("file: {0}", f));
 
                         string extension = Path.GetExtension(f);
-                        string directory = Path.GetDirectoryName(f);
-                        int lastSeparatorIndex = directory.LastIndexOf(Path.DirectorySeparatorChar);
-                        directory = directory.Substring(lastSeparatorIndex + 1).ToUpper();
+                        string directory = Path.GetFileName(Path.GetDirectoryName(f)).ToUpperInvariant();
                         switch (extension)
                         {
                             case ".pdb":
