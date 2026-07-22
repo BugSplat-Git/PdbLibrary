@@ -1,27 +1,33 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!--
-    Retargeted from the legacy net472 project to an SDK-style netstandard2.0
-    library (2026-07): the GUID parser is pure BCL (FileStream + BitConverter),
-    so netstandard2.0 runs unchanged on .NET 10 (BugSplat's cross-platform crash
-    processor consumes it there) while staying consumable by the existing net472
-    NuGet package users. Builds on Windows, macOS, and Linux.
+    Retargeted from the legacy net472 project to an SDK-style library (2026-07).
+    Multi-targeted netstandard2.0;net10.0:
+      - netstandard2.0: the MSF-PDB / PE GUID parser is pure BCL (FileStream +
+        BitConverter), so it runs unchanged on .NET 10 and stays consumable by the
+        existing net472 NuGet package users. Builds on Windows, macOS, and Linux.
+      - net10.0: additionally reads PORTABLE PDB (ECMA-335 "BSJB") debug identity via
+        the in-box System.Reflection.Metadata (see ReadPortableIdentity, #if NET). No
+        package reference is needed — the net10.0 target ships it in the framework, and
+        the netstandard2.0 flavor stays pure BCL (portable identity is a .NET-only
+        capability there).
   -->
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net10.0</TargetFrameworks>
     <RootNamespace>PdbLibrary</RootNamespace>
     <AssemblyName>PdbLibrary</AssemblyName>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
 
-    <!-- NuGet package identity (was in Properties/AssemblyInfo.cs) -->
+    <!-- NuGet package identity (was in Properties/AssemblyInfo.cs). Published (signed)
+         manually from a controlled machine; there is no publish CI in this repo. -->
     <PackageId>PdbLibrary</PackageId>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <Authors>BugSplat</Authors>
     <Company>BugSplat</Company>
     <Product>PdbLibrary</Product>
-    <Description>Extract GUIDs from Windows Executables and Symbol Files</Description>
+    <Description>Extract debug identity (GUID+age) from Windows PE images, MSF/CodeView PDBs, and Portable (ECMA-335) PDBs</Description>
     <Copyright>Copyright BugSplat, All Rights Reserved</Copyright>
   </PropertyGroup>
 

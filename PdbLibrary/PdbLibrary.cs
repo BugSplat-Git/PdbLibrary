@@ -318,6 +318,18 @@ namespace PdbLibrary
                 byte[] bytes = new byte[PdbSignature.signature.Length];
                 int n = fp.Read(bytes, 0, PdbSignature.signature.Length);
 
+                // A Portable PDB (ECMA-335, "BSJB" magic — the format modern .NET Core /
+                // SDK projects emit, including a .NET app's own assembly PDB) is CLI
+                // metadata, not an MSF container. Its debug identity is read from the
+                // metadata "PDB id" instead of the MSF streams; the resulting {GUID}{age}
+                // key matches the one a dump's CodeView record names, so it indexes into
+                // the symsrv store the same way an MSF PDB's key does.
+                if (n >= 4 && bytes[0] == (byte)'B' && bytes[1] == (byte)'S' && bytes[2] == (byte)'J' && bytes[3] == (byte)'B')
+                {
+                    this.GUID = ReadPortableIdentity(pdbFileInfo);
+                    return;
+                }
+
                 if (n != PdbSignature.signature.Length)
                 {
                     throw new Exception("Invalid PDB signature");
@@ -373,6 +385,55 @@ namespace PdbLibrary
                 }
             }
         }
+
+#if NET
+        // Portable PDB (BSJB) debug identity: the 16-byte GUID prefix of the metadata
+        // "PDB id" (System.Reflection.Metadata's DebugMetadataHeader.Id), with age fixed
+        // at 1 — the value Roslyn writes into the PE's CodeView RSDS record for portable
+        // PDBs — so GUID.Value() yields the same {GUID}{age} symbol-server key a dump's
+        // PdbStoreKey computes. The GUID bytes are laid out exactly as a System.Guid
+        // constructed from the same 16 bytes formats under "N", matching the store key.
+        //
+        // In-box on the net10.0 target; the netstandard2.0 flavor has no
+        // System.Reflection.Metadata, so portable identity is a .NET-target capability
+        // (the MSF-PDB / PE key extraction stays pure BCL and cross-platform there).
+        private static GUID ReadPortableIdentity(FileInfo pdbFileInfo)
+        {
+            using (FileStream stream = new FileStream(pdbFileInfo.FullName, FileMode.Open, FileAccess.Read))
+            using (var provider = System.Reflection.Metadata.MetadataReaderProvider.FromPortablePdbStream(stream))
+            {
+                var reader = provider.GetMetadataReader();
+                var header = reader.DebugMetadataHeader;
+                if (header == null)
+                {
+                    throw new Exception("Not a portable PDB: file has no debug metadata header");
+                }
+
+                var idBlob = header.Id; // 20-byte PDB id: 16-byte GUID + 4-byte stamp
+                if (idBlob.Length < 16)
+                {
+                    throw new Exception($"Portable PDB id too short: {idBlob.Length} bytes");
+                }
+
+                byte[] id = new byte[idBlob.Length];
+                idBlob.CopyTo(id);
+
+                uint data1 = BitConverter.ToUInt32(id, 0);
+                ushort data2 = BitConverter.ToUInt16(id, 4);
+                ushort data3 = BitConverter.ToUInt16(id, 6);
+                byte[] data4 = new byte[8];
+                Array.Copy(id, 8, data4, 0, 8);
+
+                const uint PortablePdbAge = 1; // Roslyn's fixed RSDS age for portable PDBs
+                return new GUID(data1, data2, data3, data4, PortablePdbAge);
+            }
+        }
+#else
+        private static GUID ReadPortableIdentity(FileInfo pdbFileInfo)
+            => throw new NotSupportedException(
+                "Portable PDB identity requires the .NET (net10.0) target of PdbLibrary; " +
+                "the netstandard2.0 flavor reads only MSF/CodeView PDBs.");
+#endif
     }
 
     public class PEFile
