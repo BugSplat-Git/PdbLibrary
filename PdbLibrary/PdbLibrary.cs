@@ -410,9 +410,9 @@ namespace PdbLibrary
                 }
 
                 var idBlob = header.Id; // 20-byte PDB id: 16-byte GUID + 4-byte stamp
-                if (idBlob.Length < 16)
+                if (idBlob.IsDefault || idBlob.Length < 16)
                 {
-                    throw new Exception($"Portable PDB id too short: {idBlob.Length} bytes");
+                    throw new Exception($"Portable PDB id missing or too short: {(idBlob.IsDefault ? 0 : idBlob.Length)} bytes");
                 }
 
                 byte[] id = new byte[idBlob.Length];
