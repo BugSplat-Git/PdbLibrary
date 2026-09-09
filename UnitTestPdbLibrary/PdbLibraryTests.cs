@@ -34,6 +34,19 @@ namespace UnitTestPdbLibrary
         }
 
         [Test]
+        public void TestPortablePdbGuid()
+        {
+            // A Portable PDB (BSJB) — the format a .NET Core / modern SDK app's own
+            // assembly PDB ships in. Its {GUID}{age} key must equal the one a dump's
+            // CodeView record names, so the backend indexes it into the symsrv store
+            // under the same key bugsplat-cdb later looks it up by. This fixture's key
+            // is the directory it lives under in bugsplat-cdb's data/symbols-core store.
+            PDBFile pdbFile = new PDBFile(new FileInfo(TestData("MyDotNetCrasher.pdb")));
+            string guid = pdbFile.GUID.Value();
+            Assert.That(guid, Is.EqualTo("0023F679780F4F5D8DE2F203E88AB6721"));
+        }
+
+        [Test]
         public void TestPEFileGuid()
         {
             PEFile peFile = new PEFile(new FileInfo(TestData("myConsoleCrasher.exe")));
